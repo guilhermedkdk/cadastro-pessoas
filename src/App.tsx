@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { UserPlus, Users } from 'lucide-react';
 import type { Person, ViaCepResponse } from './@types/Person';
 import {
@@ -27,6 +27,22 @@ function App() {
   const [errors, setErrors] = useState<Partial<Record<keyof Person, string>>>(
     {}
   );
+
+  useEffect(() => {
+    const cleanCEP = formData.cep.replace(/\D/g, '');
+
+    if (cleanCEP.length === 8) {
+      fetchAddress(formData.cep);
+    } else if (cleanCEP.length < 8) {
+      setFormData((prev) => ({
+        ...prev,
+        street: '',
+        neighborhood: '',
+        city: '',
+        state: '',
+      }));
+    }
+  }, [formData.cep]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -222,7 +238,6 @@ function App() {
                   name="cep"
                   value={formData.cep}
                   onChange={handleInputChange}
-                  onBlur={() => fetchAddress(formData.cep)}
                   className={`mt-1 block w-full rounded-md border-1 border-gray-300 p-1.5 outline-none focus:border-indigo-500 ${
                     errors.cep ? 'border-red-500' : ''
                   }`}
