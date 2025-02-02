@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { UserPlus, Users } from 'lucide-react';
+import { Trash2, UserPlus, Users } from 'lucide-react';
 import type { Person, ViaCepResponse } from './@types/Person';
 import {
   validateCPF,
@@ -62,6 +62,14 @@ function App() {
 
     setFormData((prev) => ({ ...prev, [name]: formattedValue }));
     setErrors((prev) => ({ ...prev, [name]: '' }));
+  };
+
+  const handleDelete = (indexToDelete: number) => {
+    setPeople((previousPeople) => {
+      return previousPeople.filter((person, currentIndex) => {
+        return currentIndex !== indexToDelete;
+      });
+    });
   };
 
   const fetchAddress = async (cep: string) => {
@@ -379,6 +387,15 @@ function App() {
                         >
                           {`${person.street}, ${person.neighborhood}, ${person.city} - ${person.state}`}
                         </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        <button
+                          className="cursor-pointer text-red-500 hover:text-red-800 focus:outline-none"
+                          title="Excluir"
+                          onClick={() => handleDelete(index)}
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </button>
                       </td>
                     </tr>
                   ))}
